@@ -1,6 +1,6 @@
 class AtasController < ApplicationController
-	skip_before_filter :check_if_login_required
-	skip_before_filter :verify_authenticity_token
+	# skip_before_filter :check_if_login_required
+	# skip_before_filter :verify_authenticity_token
 	accept_api_auth :projects, :project
 
 	def projects
