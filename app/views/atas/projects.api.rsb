@@ -1,0 +1,23 @@
+api.array :projects, api_meta(:total_count => @project_count, :offset => @offset, :limit => @limit) do
+  @projects.each do |project|
+    api.project do
+      api.name        project.name
+      api.projectManager (project.custom_values.where(custom_field_id: 276).present? and project.custom_values.where(custom_field_id: 276).first.value.present?) ? User.find(project.custom_values.where(custom_field_id: 276).first.value).name : ""
+      api.array :roles do
+        project.users_by_role.each do |rol, users|
+          api.role do
+            api.name  rol.name
+            api.array :users do
+              users.each do |user|
+                api.user do
+                  api.name  user.name
+                  api.self  true  if user.id == @user.id
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
