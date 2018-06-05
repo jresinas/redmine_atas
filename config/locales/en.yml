@@ -1,0 +1,6 @@
+en:
+  atas:
+    settings:
+      label_project_manager: Project manager
+      label_project_service: Service
+      label_ignored_project_services: Ignored services

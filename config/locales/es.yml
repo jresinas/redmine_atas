@@ -1,0 +1,6 @@
+en:
+  atas:
+    settings:
+      label_project_manager: Responsable de producción
+      label_project_service: Servicio
+      label_ignored_project_services: Servicios ignorados

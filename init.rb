@@ -1,3 +1,5 @@
+require 'atas/settings_controller_patch'
+
 Redmine::Plugin.register :redmine_atas do
   name 'Redmine-ATAS integration Plugin'
   author 'jresinas'
@@ -5,5 +7,5 @@ Redmine::Plugin.register :redmine_atas do
   version '0.0.1'
   author_url 'http://www.emergya.es'
 
-  settings :default => { :trackers => []}, :partial => 'settings/settings'
+  settings :default => { }, :partial => 'settings/atas_settings'
 end

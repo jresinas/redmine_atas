@@ -4,11 +4,18 @@ class AtasController < ApplicationController
 	accept_api_auth :projects, :project
 
 	def projects
-		forbidden_services = ["Estructura", "Otros", "No Clasificado", "Gestión de producción", "No clasificado"]
-	  @user = User.joins(:email_address).where("email_addresses.address = ?", params[:email]).first
+		forbidden_services = Setting.plugin_redmine_atas['ignored_project_services'] # ["Estructura", "Otros", "No Clasificado", "Gestión de producción", "No clasificado"]
+	  project_service = Setting.plugin_redmine_atas['project_service']
+    project_manager = Setting.plugin_redmine_atas['project_manager']
+
+    @user = User.joins(:email_address).where("email_addresses.address = ?", params[:email]).first
 
 	  if @user.present?
-			scope = @user.projects.joins(:custom_values).where("custom_values.custom_field_id = ? AND custom_values.value NOT IN (?)", 102, forbidden_services)
+			data = @user.projects
+        .joins("LEFT JOIN custom_values AS service ON service.customized_type = 'Project' AND service.customized_id = projects.id AND service.custom_field_id = #{project_service}")
+        .joins("LEFT JOIN custom_values AS pm ON pm.customized_type = 'Project' AND pm.customized_id = projects.id AND pm.custom_field_id = #{project_manager}")
+        .where("service.value NOT IN (?)", forbidden_services)
+      scope = data
 		else
 			scope = Project.none
 		end
@@ -25,7 +32,7 @@ class AtasController < ApplicationController
         @offset = 0
         @limit = scope.count
         @project_count = scope.count
-        @projects = scope.offset(@offset).limit(@limit).to_a
+        @projects = scope.select("pm.value AS pm_id, projects.*").offset(@offset).limit(@limit).to_a
       }
       format.atom {
         projects = scope.reorder(:created_on => :desc).limit(Setting.feeds_limit.to_i).to_a

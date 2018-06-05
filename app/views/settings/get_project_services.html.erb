@@ -1,0 +1,7 @@
+<%=
+if params[:custom_field].present?
+	(options_for_select(CustomField.find(params[:custom_field]).possible_values)).html_safe
+else
+	[]
+end
+%>

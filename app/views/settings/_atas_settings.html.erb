@@ -1,0 +1,30 @@
+<fieldset>
+	<p>
+		<label><%=l(:"atas.settings.label_project_manager")%></label>
+		<% options = ('<option></option>'+options_from_collection_for_select(CustomField.where(type: 'ProjectCustomField'), :id, :name, @settings['project_manager'].to_i)).html_safe %>
+		<%= select_tag 'settings[project_manager]', options %>
+	</p>
+	<p>
+		<label><%=l(:"atas.settings.label_project_service")%></label>
+		<% options = ('<option></option>'+options_from_collection_for_select(CustomField.where(type: 'ProjectCustomField'), :id, :name, @settings['project_service'].to_i)).html_safe %>
+		<%= select_tag 'settings[project_service]', options %>
+	</p>
+	<p>
+		<label><%=l(:"atas.settings.label_ignored_project_services")%></label>
+		<%
+	       if Setting.plugin_redmine_atas['project_service'].present? 
+	         options = (options_for_select(CustomField.find(Setting.plugin_redmine_atas['project_service']).possible_values, selected: @settings['ignored_project_services']).html_safe)
+	       else
+	         options = []
+	       end
+	     %>
+		<%= select_tag 'settings[ignored_project_services]', options, :multiple => true %>
+	</p>
+
+</fieldset>
+
+<script>
+  $('#settings_project_service').change(function(){
+	$('#settings_ignored_project_services').load('/settings/get_project_services', {custom_field: $('#settings_project_service').val()});
+  });
+</script>
